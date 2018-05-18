@@ -16,6 +16,10 @@
     - name: Restore the backup DB
       shell: cat /var/tmp/test_bk_down/all-databases-*.sql | sudo mysql
 
+    - name: Restart MariaDB to perms to refresh
+      become: true
+      service: name=mariadb state=restarted
+
     - name: Register root password
       shell: cat /var/tmp/test_bk_down/root/.my.cnf | grep -m1 password | cut -d'=' -f2 | tr -d "'"
       register: oldpass
