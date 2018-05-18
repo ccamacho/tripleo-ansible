@@ -16,6 +16,11 @@
     - name: Restore the backup DB
       shell: cat /var/tmp/test_bk_down/all-databases-*.sql | sudo mysql
 
+    - name: Clean root password from MariaDB to reinstall the UC
+      shell: |
+        oldpass=$(cat /var/tmp/test_bk_down/root/.my.cnf | grep -m1 password | cut -d'=' -f2 | tr -d "'")
+        mysqladmin -u root -p$oldpass password ''
+
     - name: Clean users
       become: true
       mysql_user: name="{{ item }}" host_all="yes" state="absent"
@@ -29,11 +34,6 @@
         - nova
         - mistral
         - zaqar
-
-    - name: Clean root password from MariaDB to reinstall the UC
-      shell: |
-        oldpass=$(cat /var/tmp/test_bk_down/root/.my.cnf | grep -m1 password | cut -d'=' -f2 | tr -d "'")
-        mysqladmin -u root -p$oldpass password ''
    
     - name: Reinstall the undercloud
       shell: |
