@@ -2,9 +2,17 @@
 - hosts: localhost
   tasks:
 
-- hosts: localhost
-  tasks:
-  - name: Remove temp folder with any content, to get the backup (after breaking the UC we won't be able to get it back)
+  - name: Print destroy warning.
+    vars:
+      msg: |
+        We are about to destroy the UC, as we are not
+        moving outside the UC the backup tarball, we will
+        download it and unzip it in a temporary folder to
+        recover the UC using those files.
+    debug:
+      msg: "{{ msg.split('\n') }}"
+
+  - name: Make sure the temp folder used for the restore does not exists
     become: true
     file:
       path: "/var/tmp/test_bk_down"
@@ -20,7 +28,7 @@
       mode: "0775"
       recurse: "yes"
 
-  - name: Download the UC backup to a temporary folder
+  - name: Download the UC backup to a temporary folder (After breaking the UC we won't be able to get it back)
     shell: |
       source ~/stackrc
       cd /var/tmp/test_bk_down
