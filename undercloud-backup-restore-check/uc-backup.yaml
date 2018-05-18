@@ -1,7 +1,11 @@
 ---
 - hosts: localhost
   tasks:
-  - name: Remove any previously created Undercloud backups
-    shell: openstack container delete undercloud-backups --recursive
+  - name: Remove any previously created UC backups
+    shell: |
+      source ~/stackrc
+      openstack container delete undercloud-backups --recursive
   - name: Create UC backup
-    shell: openstack undercloud backup --add-path /etc/ --add-path /root/
+    shell: |
+      source ~/stackrc
+      openstack undercloud backup --add-path /etc/ --add-path /root/
