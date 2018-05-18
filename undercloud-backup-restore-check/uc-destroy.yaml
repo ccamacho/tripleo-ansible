@@ -1,0 +1,42 @@
+---
+- hosts: localhost
+  tasks:
+
+- hosts: localhost
+  tasks:
+  - name: Remove temp folder with any content, to get the backup (after breaking the UC we won't be able to get it back)
+    become: true
+    file:
+      path: "{{ item }}"
+      state: absent
+    with_items:
+      - /var/tmp/test_bk_down
+  - name: Create temp folder to unzip the backup
+    become: true
+    file:
+      path: "{{ item }}"
+      state: directory
+    with_items:
+      - /var/tmp/test_bk_down
+  - name: Download the UC backup to a temporary folder
+    shell: |
+      cd /var/tmp/test_bk_down
+      openstack container save undercloud-backups
+      tar -xvf UC-backup-*.tar
+      gunzip *.gz
+      tar -xvf filesystem-*.tar
+  - name: Remove mariadb
+    become: true
+    yum: pkg={{ item }}
+         state=absent
+    with_items:
+      - mariadb
+      - mariadb-server
+  - name: Remove files
+    become: true
+    file:
+      path: "{{ item }}"
+      state: absent
+    with_items:
+      - /root/.my.cnf
+      - /var/lib/mysql
