@@ -1,20 +1,32 @@
 Steps to check the UC backup
 ----------------------------
 
+The Ansible playbooks presented in this folder will simulate:
+  * Backing up an UC
+  * Destroying an UC
+  * Restore an UC
+
+
+To test the UC backup and restore procedure, run from the UC:
+
+```
+  cd
+  git clone https://github.com/ccamacho/tripleo-ansible
+  cd tripleo-ansible/undercloud-backup-restore-check/
+  # This playbook will create the UC backup
+  ansible-playbook uc-backup.yaml
+  # This playbook will destroy the UC (remove DB server, remove DB files, remove config files)
+  ansible-playbook uc-destroy.yaml
+  # This playbook will reinstall the DB server, restore the DB backup, fix permissions and reinstall the UC
+  ansible-playbook uc-restore.yaml
+```
+
 After breaking the UC the user should get errors like:
 
 ```
   (undercloud) [stack@undercloud ~]$ heat stack-list
   WARNING (shell) "heat stack-list" is deprecated, please use "openstack stack list" instead
   An unexpected error prevented the server from fulfilling your request. (HTTP 500) (Request-ID: req-65b7015a-9fcc-42ca-9356-7b161307481a)
-```
-
-To test the UC backup and restore procedure, run:
-
-```
-  ansible-playbook uc-backup.yaml
-  ansible-playbook uc-destroy.yaml
-  ansible-playbook uc-restore.yaml
 ```
 
 After running the last 3 playbooks the user should be able to execute again:
