@@ -15,6 +15,8 @@ To test the UC backup and restore procedure, run from the UC:
   cd tripleo-ansible/undercloud-backup-restore-check/
   # This playbook will create the UC backup
   ansible-playbook uc-backup.yaml
+  # This playbook will download the UC backup to be used in the restore
+  ansible-playbook uc-backup-download.yaml
   # This playbook will destroy the UC (remove DB server, remove DB files, remove config files)
   ansible-playbook uc-destroy.yaml
   # This playbook will reinstall the DB server, restore the DB backup, fix permissions and reinstall the UC
