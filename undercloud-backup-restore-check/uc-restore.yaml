@@ -30,6 +30,11 @@
         - mistral
         - zaqar
 
+    - name: Clean root password from MariaDB to reinstall the UC
+      shell: |
+        oldpass=$(cat /var/tmp/test_bk_down/root/.my.cnf | grep -m1 password | cut -d'=' -f2 | tr -d "'")
+        mysqladmin -u root -p$oldpass password ''
+   
     - name: Reinstall the undercloud
       shell: |
         openstack undercloud install
