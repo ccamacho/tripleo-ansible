@@ -11,7 +11,7 @@ To test the UC backup and restore procedure, run from the UC:
 
 ```
   cd
-  git clone https://github.com/ccamacho/tripleo-ansible
+  git clone git@github.com:ccamacho/tripleo-ansible.git
   cd tripleo-ansible/undercloud-backup-restore-check/
   # This playbook will create the UC backup
   ansible-playbook uc-backup.yaml

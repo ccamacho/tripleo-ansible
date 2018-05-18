@@ -16,11 +16,13 @@
     - name: Restore the backup DB
       shell: cat /var/tmp/test_bk_down/all-databases-*.sql | sudo mysql
 
+    - name: Register root password
+      shell: cat /var/tmp/test_bk_down/root/.my.cnf | grep -m1 password | cut -d'=' -f2 | tr -d "'"
+      register: oldpass
+
     - name: Clean root password from MariaDB to reinstall the UC
       shell: |
-        become: true
-        oldpass=$(cat /var/tmp/test_bk_down/root/.my.cnf | grep -m1 password | cut -d'=' -f2 | tr -d "'")
-        mysqladmin -u root -p$oldpass password ''
+        mysqladmin -u root -p{{ oldpass.stdout }} password ''
 
     - name: Clean users
       become: true
