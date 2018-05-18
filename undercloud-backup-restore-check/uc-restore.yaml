@@ -29,3 +29,7 @@
         - nova
         - mistral
         - zaqar
+
+    - name: Reinstall the undercloud
+      shell: |
+        openstack undercloud install

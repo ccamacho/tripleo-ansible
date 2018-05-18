@@ -20,7 +20,15 @@ To test the UC backup and restore procedure, run:
 After running the last 3 playbooks the user should be able to execute again:
 
 ```
-  heat stack-list
+  (undercloud) [stack@undercloud ~]$ heat stack-list
+  WARNING (shell) "heat stack-list" is deprecated, please use "openstack stack list" instead
+  +--------------------------------------+------------+-----------------+----------------------+----------------------+----------------------------------+
+  | id                                   | stack_name | stack_status    | creation_time        | updated_time         | project                          |
+  +--------------------------------------+------------+-----------------+----------------------+----------------------+----------------------------------+
+  | 4ab55020-f7c8-4bbe-bd34-7aa9a8a5955f | overcloud  | UPDATE_COMPLETE | 2018-05-17T15:29:57Z | 2018-05-18T06:34:06Z | c9e254983899468d86ba4b1347f0b327 |
+  +----------------------------------------+------------+---------------+----------------------+----------------------+----------------------------------+
 ```
+
+
 
 

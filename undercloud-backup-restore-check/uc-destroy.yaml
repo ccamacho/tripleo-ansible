@@ -7,24 +7,43 @@
   - name: Remove temp folder with any content, to get the backup (after breaking the UC we won't be able to get it back)
     become: true
     file:
-      path: "{{ item }}"
+      path: "/var/tmp/test_bk_down"
       state: absent
-    with_items:
-      - /var/tmp/test_bk_down
+
   - name: Create temp folder to unzip the backup
     become: true
     file:
-      path: "{{ item }}"
+      path: "/var/tmp/test_bk_down"
       state: directory
-    with_items:
-      - /var/tmp/test_bk_down
+      owner: "stack"
+      group: "stack"
+      mode: "0775"
+      recurse: "yes"
+
   - name: Download the UC backup to a temporary folder
     shell: |
+      source ~/stackrc
       cd /var/tmp/test_bk_down
       openstack container save undercloud-backups
+
+  - name: Unzip the backup
+    become: true
+    shell: |
+      cd /var/tmp/test_bk_down
       tar -xvf UC-backup-*.tar
       gunzip *.gz
       tar -xvf filesystem-*.tar
+
+  - name: Make sure stack user can get the backup files
+    become: true
+    file:
+      path: "/var/tmp/test_bk_down"
+      state: directory
+      owner: "stack"
+      group: "stack"
+      mode: "0775"
+      recurse: "yes"
+
   - name: Remove mariadb
     become: true
     yum: pkg={{ item }}
@@ -32,6 +51,7 @@
     with_items:
       - mariadb
       - mariadb-server
+
   - name: Remove files
     become: true
     file:
