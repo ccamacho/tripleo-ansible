@@ -19,7 +19,7 @@
       become: true
       service: name=mariadb state=restarted
 
-    - name: Restore the backup DB
+    - name: Allow restore big dump DB files
       shell: mysql -uroot -e"set global max_allowed_packet = 1073741824;"
 
     - name: Restore the backup DB
