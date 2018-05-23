@@ -6,7 +6,7 @@
         src: /var/tmp/test_bk_down/home/stack/
         dest: /home/stack/
     
-    - name: Install mariadb python-tripleoclient
+    - name: Install mariadb and python-tripleoclient
       become: true
       yum: pkg={{ item }}
            state=present
