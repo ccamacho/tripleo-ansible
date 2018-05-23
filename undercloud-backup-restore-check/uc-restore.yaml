@@ -1,12 +1,10 @@
 ---
 - hosts: localhost
   tasks:
-  
-  # Synchronize two directories on one remote host.
     - name: Synchronize the stack user's folder
       synchronize:
-      src: /var/tmp/test_bk_down/home/stack/
-      dest: /home/stack/
+        src: /var/tmp/test_bk_down/home/stack/
+        dest: /home/stack/
     
     - name: Install mariadb python-tripleoclient
       become: true
