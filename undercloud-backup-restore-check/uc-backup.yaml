@@ -4,7 +4,8 @@
   - name: Remove any previously created UC backups
     shell: |
       source ~/stackrc
-      openstack container delete undercloud-backups --recursive
+      openstack container delete undercloud-backups --recursive || true
+      openstack container delete undercloud-backups_segments --recursive || true
     ignore_errors: True
   - name: Create UC backup
     shell: |
