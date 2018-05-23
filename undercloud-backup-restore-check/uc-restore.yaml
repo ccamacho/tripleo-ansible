@@ -1,13 +1,21 @@
 ---
 - hosts: localhost
   tasks:
-    - name: Install mariadb
+  
+  # Synchronize two directories on one remote host.
+    - name: Synchronize the stack user's folder
+      synchronize:
+      src: /var/tmp/test_bk_down/home/stack/
+      dest: /home/stack/
+    
+    - name: Install mariadb python-tripleoclient
       become: true
       yum: pkg={{ item }}
            state=present
       with_items:
         - mariadb
         - mariadb-server
+        - python-tripleoclient
 
     - name: Restart MariaDB
       become: true
