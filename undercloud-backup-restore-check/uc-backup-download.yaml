@@ -43,11 +43,6 @@
       tar -xvf filesystem-*.tar
 
   - name: Make sure stack user can get the backup files
-    become: true
-    file:
-      path: "/var/tmp/test_bk_down"
-      state: directory
-      owner: "stack"
-      group: "stack"
-      mode: "0775"
-      recurse: "yes"
+    shell: |
+      sudo chown -R stack. /var/tmp/test_bk_down
+      sudo chmod -R 775 /var/tmp/test_bk_down
