@@ -20,6 +20,9 @@
       service: name=mariadb state=restarted
 
     - name: Restore the backup DB
+      shell: mysql -uroot -e"set global max_allowed_packet = 1073741824;"
+
+    - name: Restore the backup DB
       shell: cat /var/tmp/test_bk_down/all-databases-*.sql | sudo mysql
 
     - name: Restart MariaDB to perms to refresh
