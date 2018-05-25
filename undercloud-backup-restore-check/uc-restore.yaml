@@ -29,6 +29,7 @@
         dest: /etc/pki/instack-certs/
 
     - name: Create hieradata folder
+      become: true
       file:
         path: /etc/puppet/hieradata/
         state: directory
