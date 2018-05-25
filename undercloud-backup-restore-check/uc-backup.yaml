@@ -20,4 +20,5 @@
   - name: Create UC backup
     shell: |
       source ~/stackrc
-      openstack undercloud backup --add-path /etc/ --add-path /root/ --add-path /var/lib/glance/ --add-path /var/lib/docker/ --add-path /var/lib/registry/ --add-path /srv/node/
+      # openstack undercloud backup --add-path /etc/ --add-path /root/ --add-path /var/lib/glance/ --add-path /var/lib/docker/ --add-path /var/lib/registry/ --add-path /srv/node/
+      openstack undercloud backup --add-path /etc/ --add-path /root/ --add-path /var/lib/ --add-path /srv/node/
