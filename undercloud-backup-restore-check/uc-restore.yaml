@@ -1,6 +1,16 @@
 ---
 - hosts: localhost
   tasks:
+    - name: Install required packages if not installed
+      become: true
+      yum: pkg={{ item }}
+           state=present
+      with_items:
+        - unzip
+        - wget
+        - ansible
+        - MySQL-python
+        
     - name: Synchronize the stack user's folder
       synchronize:
         src: /var/tmp/test_bk_down/home/stack/
