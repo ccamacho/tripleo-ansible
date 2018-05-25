@@ -34,17 +34,15 @@
         src: /var/tmp/test_bk_down/etc/puppet/hieradata/
         dest: /etc/puppet/hieradata/
 
-    - name: Synchronize certmonger certs
-      become: true
-      synchronize:
-        src: /var/tmp/test_bk_down/var/lib/certmonger/
-        dest: /var/lib/certmonger/
-
-    - name: Refresh cert
+    - name: Refresh certs
       become: true
       shell: |
-        openssl pkcs12 -in /var/lib/certmonger/local/creds -out /etc/pki/ca-trust/source/anchors/undercloud-ca.pem -nokeys -nodes -passin pass:""
-        update-ca-trust extract
+        sudo mkdir -p /etc/pki/instack-certs || true
+        sudo cp /home/stack/undercloud.pem /etc/pki/instack-certs
+        sudo semanage fcontext -a -t etc_t "/etc/pki/instack-certs(/.*)?"
+        sudo restorecon -R /etc/pki/instack-certs
+        sudo cp cacert.pem /etc/pki/ca-trust/source/anchors/
+        sudo update-ca-trust extract
 
     - name: Install mariadb and python-tripleoclient
       become: true
