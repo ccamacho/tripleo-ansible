@@ -27,7 +27,13 @@
       synchronize:
         src: /var/tmp/test_bk_down/etc/pki/instack-certs/
         dest: /etc/pki/instack-certs/
-        
+
+    - name: Synchronize hieradata
+      become: true
+      synchronize:
+        src: /var/tmp/test_bk_down/etc/puppet/hieradata/
+        dest: /etc/puppet/hieradata/
+
     - name: Install mariadb and python-tripleoclient
       become: true
       yum: pkg={{ item }}
