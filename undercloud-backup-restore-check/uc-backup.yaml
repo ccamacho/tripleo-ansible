@@ -1,12 +1,22 @@
 ---
 - hosts: localhost
   tasks:
+  - name: Install required packages if not installed
+    become: true
+    yum: pkg={{ item }}
+         state=present
+    with_items:
+      - unzip
+      - wget
+      - MySQL-python
+
   - name: Remove any previously created UC backups
     shell: |
       source ~/stackrc
       openstack container delete undercloud-backups --recursive || true
       openstack container delete undercloud-backups_segments --recursive || true
     ignore_errors: True
+
   - name: Create UC backup
     shell: |
       source ~/stackrc
