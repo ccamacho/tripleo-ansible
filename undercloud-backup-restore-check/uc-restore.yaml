@@ -28,7 +28,7 @@
         src: /var/tmp/test_bk_down/etc/pki/instack-certs/
         dest: /etc/pki/instack-certs/
 
-    - name: Create backup folder
+    - name: Create hieradata folder
       file:
         path: /etc/puppet/hieradata/
         state: directory
