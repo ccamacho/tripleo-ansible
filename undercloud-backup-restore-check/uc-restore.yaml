@@ -15,7 +15,17 @@
       synchronize:
         src: /var/tmp/test_bk_down/home/stack/
         dest: /home/stack/
-    
+        
+    - name: Synchronize haproxy config file
+      synchronize:
+        src: /var/tmp/test_bk_down/etc/haproxy/
+        dest: /etc/haproxy/
+
+    - name: Synchronize cert files
+      synchronize:
+        src: /var/tmp/test_bk_down/etc/pki/instack-certs/
+        dest: /etc/pki/instack-certs/
+        
     - name: Install mariadb and python-tripleoclient
       become: true
       yum: pkg={{ item }}
