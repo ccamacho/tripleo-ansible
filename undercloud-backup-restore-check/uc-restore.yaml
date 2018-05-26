@@ -43,12 +43,12 @@
     - name: Refresh certs
       become: true
       shell: |
-        sudo mkdir -p /etc/pki/instack-certs || true
-        sudo cp /home/stack/undercloud.pem /etc/pki/instack-certs
-        sudo semanage fcontext -a -t etc_t "/etc/pki/instack-certs(/.*)?"
-        sudo restorecon -R /etc/pki/instack-certs
-        sudo cp cacert.pem /etc/pki/ca-trust/source/anchors/
-        sudo update-ca-trust extract
+        mkdir -p /etc/pki/instack-certs || true
+        cp /home/stack/undercloud.pem /etc/pki/instack-certs
+        semanage fcontext -a -t etc_t "/etc/pki/instack-certs(/.*)?"
+        restorecon -R /etc/pki/instack-certs
+        cp cacert.pem /etc/pki/ca-trust/source/anchors/
+        update-ca-trust extract
 
     - name: Install mariadb and python-tripleoclient
       become: true
