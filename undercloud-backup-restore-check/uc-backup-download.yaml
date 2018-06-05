@@ -12,6 +12,15 @@
     debug:
       msg: "{{ msg.split('\n') }}"
 
+  - name: Make sure the time is synchronized
+    become: true
+    shell: |
+      yum install -y ntp
+      chkconfig ntpd on
+      service ntpd stop
+      ntpdate pool.ntp.org
+      service ntpd restart
+      
   - name: Make sure the temp folder used for the restore does not exists
     become: true
     file:
