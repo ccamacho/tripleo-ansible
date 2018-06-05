@@ -1,6 +1,16 @@
 ---
 - hosts: localhost
   tasks:
+  
+    - name: Make sure the time is synchronized
+      become: true
+      shell: |
+        yum install -y ntp
+        chkconfig ntpd on
+        service ntpd stop
+        ntpdate pool.ntp.org
+        service ntpd restart
+      
     - name: Install required packages if not installed
       become: true
       yum: pkg={{ item }}
