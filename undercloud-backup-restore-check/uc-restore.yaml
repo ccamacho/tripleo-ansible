@@ -12,6 +12,7 @@
         - MySQL-python
         
     - name: Synchronize the stack user's folder
+      become: true
       synchronize:
         src: /var/tmp/test_bk_down/home/stack/
         dest: /home/stack/
@@ -40,15 +41,41 @@
         src: /var/tmp/test_bk_down/etc/puppet/hieradata/
         dest: /etc/puppet/hieradata/
 
+    - name: Synchronize swift data
+      become: true
+      synchronize:
+        src: /var/tmp/test_bk_down/srv/node/
+        dest: /srv/node/
+
+    - name: Synchronize glance data
+      become: true
+      synchronize:
+        src: /var/tmp/test_bk_down/var/lib/glance/
+        dest: /var/lib/glance/
+    
+    - name: Synchronize keystone
+      become: true
+      synchronize:
+        src: /var/tmp/test_bk_down/etc/keystone/
+        dest: /etc/keystone/
+
+    - name: Synchronize heat
+      become: true
+      synchronize:
+        src: /var/tmp/test_bk_down/etc/heat/
+        dest: /etc/heat/
+
     - name: Refresh certs
       become: true
       shell: |
-        mkdir -p /etc/pki/instack-certs || true
-        cp /home/stack/undercloud.pem /etc/pki/instack-certs
-        semanage fcontext -a -t etc_t "/etc/pki/instack-certs(/.*)?"
-        restorecon -R /etc/pki/instack-certs
-        cp cacert.pem /etc/pki/ca-trust/source/anchors/
-        update-ca-trust extract
+        sudo mkdir -p /etc/pki/instack-certs || true
+        sudo cp /home/stack/undercloud.pem /etc/pki/instack-certs
+        sudo semanage fcontext -a -t etc_t "/etc/pki/instack-certs(/.*)?"
+        sudo restorecon -R /etc/pki/instack-certs
+        sudo mkdir -p /etc/pki/ca-trust/source/anchors/
+        sudo cp /home/stack/cacert.pem /etc/pki/ca-trust/source/anchors/
+        sudo cp /home/stack/overcloud-cacert.pem /etc/pki/ca-trust/source/anchors/
+        sudo update-ca-trust extract
 
     - name: Install mariadb and python-tripleoclient
       become: true
@@ -67,7 +94,7 @@
       shell: mysql -uroot -e"set global max_allowed_packet = 1073741824;"
 
     - name: Restore the backup DB
-      shell: cat /var/tmp/test_bk_down/all-databases-*.sql | sudo mysql
+      shell: mysql -u root < /var/tmp/test_bk_down/all-databases.sql
 
     - name: Restart MariaDB to perms to refresh
       become: true
@@ -96,6 +123,6 @@
         - mistral
         - zaqar
    
-    - name: Reinstall the undercloud
-      shell: |
-        openstack undercloud install
+#    - name: Reinstall the undercloud
+#      shell: |
+#        openstack undercloud install
