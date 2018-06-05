@@ -41,8 +41,3 @@
       tar -xvf UC-backup-*.tar
       gunzip *.gz
       tar -xvf filesystem-*.tar
-
-  - name: Make sure stack user can get the backup files
-    shell: |
-      sudo chown -R stack. /var/tmp/test_bk_down
-      sudo chmod -R 775 /var/tmp/test_bk_down
