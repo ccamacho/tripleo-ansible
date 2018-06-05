@@ -37,7 +37,7 @@
   - name: Unzip the backup
     become: true
     shell: |
-      cd /var/tmp/test_bk_down
-      tar -xvf UC-backup-*.tar
-      gunzip *.gz
-      tar -xvf filesystem-*.tar
+      tar -xvf /var/tmp/test_bk_down/UC-backup-*.tar -C /var/tmp/test_bk_down || true
+      chown stack /var/tmp/test_bk_down
+      gunzip /var/tmp/test_bk_down/*.gz -c > /var/tmp/test_bk_down/all-databases.sql
+      tar -xvf /var/tmp/test_bk_down/filesystem-*.tar -C /var/tmp/test_bk_down      
