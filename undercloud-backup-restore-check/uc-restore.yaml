@@ -23,11 +23,16 @@
         src: /var/tmp/test_bk_down/etc/haproxy/
         dest: /etc/haproxy/
 
+    - name: Check if certs folder exists
+      stat: path=/var/tmp/test_bk_down/etc/pki/instack-certs/
+      register: cert_folder
+
     - name: Synchronize cert files
       become: true
       synchronize:
         src: /var/tmp/test_bk_down/etc/pki/instack-certs/
         dest: /etc/pki/instack-certs/
+      when: cert_folder.stat.exists
 
     - name: Create hieradata folder
       become: true
