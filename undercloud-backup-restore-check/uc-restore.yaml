@@ -20,6 +20,9 @@
         - wget
         - ansible
         - MySQL-python
+        - mariadb
+        - mariadb-server
+        - python-tripleoclient
         
     - name: Synchronize the stack user's folder
       become: true
@@ -91,15 +94,6 @@
         cp /home/stack/cacert.pem /etc/pki/ca-trust/source/anchors/
         cp /home/stack/overcloud-cacert.pem /etc/pki/ca-trust/source/anchors/
         update-ca-trust extract
-
-    - name: Install mariadb and python-tripleoclient
-      become: true
-      yum: pkg={{ item }}
-           state=present
-      with_items:
-        - mariadb
-        - mariadb-server
-        - python-tripleoclient
 
     - name: Restart MariaDB
       become: true
