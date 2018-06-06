@@ -23,6 +23,7 @@
         - mariadb
         - mariadb-server
         - python-tripleoclient
+        - openstack-keystone
         
     - name: Synchronize the stack user's folder
       become: true
