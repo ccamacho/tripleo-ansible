@@ -2,12 +2,12 @@
 - hosts: localhost
   tasks:
 
-  - name: Print destroy warning.
+  - name: Preparing the backup to be restored.
     vars:
       msg: |
-        We are about to destroy the UC, as we are not
-        moving outside the UC the backup tarball, we will
-        download it and unzip it in a temporary folder to
+        Make sure the backup file is stored correctly in
+        /var/tmp/undercloud-backup/ before running this playbook.
+        We will unzip the backup file in a temporary folder to
         recover the UC using those files.
     debug:
       msg: "{{ msg.split('\n') }}"

@@ -51,3 +51,13 @@
       source ~/stackrc
       s_list=$(sudo systemctl list-unit-files | grep enabled | grep -v \@ | grep openstack\- | sed -e's/  */ /g' | cut -d" " -f 1)
       for service in $s_list ; do sudo systemctl restart $service ; done
+
+
+  - name: Move the backup to the Hypervisor
+    vars:
+      msg: |
+        The backup file is created as
+        /var/tmp/undercloud-backup/UC-backup-<date>.tar
+        Please, move this file to a safe location
+    debug:
+      msg: "{{ msg.split('\n') }}"
