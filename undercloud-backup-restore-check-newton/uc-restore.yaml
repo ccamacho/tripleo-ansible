@@ -86,6 +86,12 @@
         src: /var/tmp/test_bk_down/etc/heat/
         dest: /etc/heat/
 
+    - name: Synchronize root home
+      become: true
+      synchronize:
+        src: /var/tmp/test_bk_down/root/
+        dest: /root/
+
     - name: Refresh certs
       become: true
       shell: |
@@ -106,7 +112,7 @@
       shell: mysql -uroot -e"set global max_allowed_packet = 1073741824;"
 
     - name: Restore the backup DB
-      shell: mysql -u root < /var/tmp/test_bk_down/all-databases.sql
+      shell: mysql -u root < /root/undercloud-all-databases.sql
 
     - name: Restart MariaDB to perms to refresh
       become: true
