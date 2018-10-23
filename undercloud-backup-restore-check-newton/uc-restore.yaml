@@ -106,6 +106,7 @@
       shell: mysql -uroot -e"set global max_allowed_packet = 1073741824;"
 
     - name: Restore the backup DB
+      become: true
       shell: mysql -u root < /var/tmp/test_bk_down/root/undercloud-all-databases.sql
 
     - name: Restart MariaDB to perms to refresh

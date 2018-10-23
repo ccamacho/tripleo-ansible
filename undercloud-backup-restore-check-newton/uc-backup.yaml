@@ -25,11 +25,22 @@
       s_list=$(sudo systemctl list-unit-files | grep enabled | grep -v \@ | grep openstack\- | sed -e's/  */ /g' | cut -d" " -f 1)
       for service in $s_list ; do sudo systemctl stop $service ; done
 
-  - name: Create UC backup
+  - name: Create temp folder to create the backup
+    become: true
+    file:
+      path: "/var/tmp/undercloud-backup"
+      state: directory
+      owner: "stack"
+      group: "stack"
+      mode: "0775"
+      recurse: "yes"
+
+  - name: Create UC BD backup
     shell: |
-      source ~/stackrc
-      sudo mkdir -p /var/tmp/undercloud-backup/
       sudo mysqldump --opt --single-transaction --all-databases > /root/undercloud-all-databases.sql
+
+  - name: Create UC FS backup
+    shell: |
       sudo tar --xattrs --ignore-failed-read -cf \
         /var/tmp/undercloud-backup/UC-backup-`date +%F`.tar \
         /root/undercloud-all-databases.sql \
