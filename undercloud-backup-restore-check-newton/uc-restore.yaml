@@ -138,3 +138,11 @@
     - name: Reinstall the undercloud
       shell: |
         openstack undercloud install
+
+    - name: Restart all services
+      shell: |
+        systemctl list-unit-files | grep enabled | grep openstack\- | sed -e's/  */ /g' | cut -d" " -f 1 | while read service ; do sudo systemctl restart $service ; done
+
+
+
+

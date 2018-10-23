@@ -18,3 +18,13 @@
     with_items:
       - /root/.my.cnf
       - /var/lib/mysql
+
+    - name: Clean Maria
+      become: true
+      shell: |
+        systemctl stop mariadb
+        mysqld_safe --skip-grant-tables &
+        mysql -u root -e "use mysql; update user set password=PASSWORD('') where User='root'; flush privileges;"
+        sudo kill -9 `cat /var/run/mariadb/mariadb.pid`
+        sudo kill -9 `ps -ef | grep mysqld_safe |grep -v color | grep -m1 mysql | sed -e's/  */ /g' | cut -d" " -f 2`
+        systemctl restart mariadb

@@ -19,6 +19,12 @@
       - wget
       - MySQL-python
 
+  - name: Stop OpenStack services
+    shell: |
+      source ~/stackrc
+      s_list=$(sudo systemctl list-unit-files | grep enabled | grep openstack\- | sed -e's/  */ /g' | cut -d" " -f 1)
+      for service in $s_list ; do sudo systemctl stop $service ; done
+
   - name: Create UC backup
     shell: |
       source ~/stackrc
@@ -39,3 +45,9 @@
       # missing /var/lib/certmonger
       # Backup all /var/lib/
       # openstack undercloud backup --add-path /etc/ --add-path /root/ --add-path /var/lib/ --add-path /srv/node/
+
+  - name: Restart OpenStack services
+    shell: |
+      source ~/stackrc
+      s_list=$(sudo systemctl list-unit-files | grep enabled | grep openstack\- | sed -e's/  */ /g' | cut -d" " -f 1)
+      for service in $s_list ; do sudo systemctl restart $service ; done
