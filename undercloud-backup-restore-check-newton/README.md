@@ -3,7 +3,6 @@ Steps to check the UC backup
 
 The Ansible playbooks presented in this folder will simulate:
   * Backing up an UC.
-  * Download an UC backup.
   * Destroying an UC.
   * Restore an UC.
 
