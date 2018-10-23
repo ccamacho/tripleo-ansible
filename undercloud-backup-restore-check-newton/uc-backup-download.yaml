@@ -38,7 +38,9 @@
       recurse: "yes"
 
   - name: Check that the backup is in place
-    find: paths=/var/tmp/undercloud-backup/ file_type=directory patterns="*.tar"
+    find:
+      paths=/var/tmp/undercloud-backup
+      patterns="*.tar"
     register: back_files
 
   - name: Print message if backup does not exist
@@ -54,7 +56,5 @@
     shell: |
       tar -xvf /var/tmp/undercloud-backup/UC-backup-*.tar -C /var/tmp/test_bk_down || true
       chown stack /var/tmp/test_bk_down
-      gunzip /var/tmp/test_bk_down/*.gz -c > /var/tmp/test_bk_down/all-databases.sql
-      tar -xvf /var/tmp/test_bk_down/filesystem-*.tar -C /var/tmp/test_bk_down      
     when: back_files.matched|int != 0
 
