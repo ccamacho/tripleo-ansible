@@ -19,12 +19,6 @@
       - wget
       - MySQL-python
 
-  - name: Stop OpenStack services
-    shell: |
-      source ~/stackrc
-      s_list=$(sudo systemctl list-unit-files | grep enabled | grep -v \@ | grep openstack\- | sed -e's/  */ /g' | cut -d" " -f 1)
-      for service in $s_list ; do sudo systemctl stop $service ; done
-
   - name: Create temp folder to create the backup
     become: true
     file:
@@ -58,11 +52,11 @@
       # Backup all /var/lib/
       # openstack undercloud backup --add-path /etc/ --add-path /root/ --add-path /var/lib/ --add-path /srv/node/
 
-  - name: Restart OpenStack services
-    shell: |
-      source ~/stackrc
-      s_list=$(sudo systemctl list-unit-files | grep enabled | grep -v \@ | grep openstack\- | sed -e's/  */ /g' | cut -d" " -f 1)
-      for service in $s_list ; do sudo systemctl restart $service ; done
+#  - name: Restart OpenStack services
+#    shell: |
+#      source ~/stackrc
+#      s_list=$(sudo systemctl list-unit-files | grep enabled | grep -v \@ | grep openstack\- | sed -e's/  */ /g' | cut -d" " -f 1)
+#      for service in $s_list ; do sudo systemctl restart $service ; done
 
 
   - name: Move the backup to the Hypervisor
