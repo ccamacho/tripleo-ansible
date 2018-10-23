@@ -1,0 +1,52 @@
+---
+- hosts: localhost
+  tasks:
+
+  - name: Print destroy warning.
+    vars:
+      msg: |
+        We are about to destroy the UC, as we are not
+        moving outside the UC the backup tarball, we will
+        download it and unzip it in a temporary folder to
+        recover the UC using those files.
+    debug:
+      msg: "{{ msg.split('\n') }}"
+
+  - name: Make sure the time is synchronized
+    become: true
+    shell: |
+      yum install -y ntp
+      chkconfig ntpd on
+      service ntpd stop
+      ntpdate pool.ntp.org
+      service ntpd restart
+      
+  - name: Make sure the temp folder used for the restore does not exists
+    become: true
+    file:
+      path: "/var/tmp/test_bk_down"
+      state: absent
+
+  - name: Create temp folder to unzip the backup
+    become: true
+    file:
+      path: "/var/tmp/test_bk_down"
+      state: directory
+      owner: "stack"
+      group: "stack"
+      mode: "0775"
+      recurse: "yes"
+
+  - name: Download the UC backup to a temporary folder (After breaking the UC we won't be able to get it back)
+    shell: |
+      source ~/stackrc
+      cd /var/tmp/test_bk_down
+      openstack container save undercloud-backups
+
+  - name: Unzip the backup
+    become: true
+    shell: |
+      tar -xvf /var/tmp/test_bk_down/UC-backup-*.tar -C /var/tmp/test_bk_down || true
+      chown stack /var/tmp/test_bk_down
+      gunzip /var/tmp/test_bk_down/*.gz -c > /var/tmp/test_bk_down/all-databases.sql
+      tar -xvf /var/tmp/test_bk_down/filesystem-*.tar -C /var/tmp/test_bk_down      

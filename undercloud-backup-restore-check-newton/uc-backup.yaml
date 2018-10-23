@@ -1,0 +1,41 @@
+---
+- hosts: localhost
+  tasks:
+  - name: Make sure the time is synchronized
+    become: true
+    shell: |
+      yum install -y ntp
+      chkconfig ntpd on
+      service ntpd stop
+      ntpdate pool.ntp.org
+      service ntpd restart
+      
+  - name: Install required packages if not installed
+    become: true
+    yum: pkg={{ item }}
+         state=present
+    with_items:
+      - unzip
+      - wget
+      - MySQL-python
+
+  - name: Create UC backup
+    shell: |
+      source ~/stackrc
+      sudo mkdir -p /var/tmp/undercloud-backup/
+      sudo mysqldump --opt --single-transaction --all-databases > /root/undercloud-all-databases.sql
+      sudo tar --xattrs --ignore-failed-read -cf \
+        /var/tmp/undercloud-backup/UC-backup-`date +%F`.tar \
+        /root/undercloud-all-databases.sql \
+        /etc \
+        /var/log \
+        /root \
+        /var/lib/glance \
+        /var/lib/docker \
+        /var/lib/certmonger \
+        /var/lib/registry \
+        /srv/node \
+        /home/stack
+      # missing /var/lib/certmonger
+      # Backup all /var/lib/
+      # openstack undercloud backup --add-path /etc/ --add-path /root/ --add-path /var/lib/ --add-path /srv/node/

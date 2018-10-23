@@ -1,0 +1,140 @@
+---
+- hosts: localhost
+  tasks:
+  
+    - name: Make sure the time is synchronized
+      become: true
+      shell: |
+        yum install -y ntp
+        chkconfig ntpd on
+        service ntpd stop
+        ntpdate pool.ntp.org
+        service ntpd restart
+      
+    - name: Install required packages if not installed
+      become: true
+      yum: pkg={{ item }}
+           state=present
+      with_items:
+        - unzip
+        - wget
+        - ansible
+        - MySQL-python
+        - mariadb
+        - mariadb-server
+        - python-tripleoclient
+        - openstack-keystone
+        - openstack-glance
+        - openstack-swift
+        
+    - name: Synchronize the stack user's folder
+      become: true
+      synchronize:
+        src: /var/tmp/test_bk_down/home/stack/
+        dest: /home/stack/
+        
+    - name: Synchronize haproxy config file
+      become: true
+      synchronize:
+        src: /var/tmp/test_bk_down/etc/haproxy/
+        dest: /etc/haproxy/
+
+    - name: Check if certs folder exists
+      stat: path=/var/tmp/test_bk_down/etc/pki/instack-certs/
+      register: cert_folder
+
+    - name: Synchronize cert files
+      become: true
+      synchronize:
+        src: /var/tmp/test_bk_down/etc/pki/instack-certs/
+        dest: /etc/pki/instack-certs/
+      when: cert_folder.stat.exists
+
+    - name: Create hieradata folder
+      become: true
+      file:
+        path: /etc/puppet/hieradata/
+        state: directory
+    
+    - name: Synchronize hieradata
+      become: true
+      synchronize:
+        src: /var/tmp/test_bk_down/etc/puppet/hieradata/
+        dest: /etc/puppet/hieradata/
+
+    - name: Synchronize swift data
+      become: true
+      synchronize:
+        src: /var/tmp/test_bk_down/srv/node/
+        dest: /srv/node/
+
+    - name: Synchronize glance data
+      become: true
+      synchronize:
+        src: /var/tmp/test_bk_down/var/lib/glance/
+        dest: /var/lib/glance/
+    
+    - name: Synchronize keystone
+      become: true
+      synchronize:
+        src: /var/tmp/test_bk_down/etc/keystone/
+        dest: /etc/keystone/
+
+    - name: Synchronize heat
+      become: true
+      synchronize:
+        src: /var/tmp/test_bk_down/etc/heat/
+        dest: /etc/heat/
+
+    - name: Refresh certs
+      become: true
+      shell: |
+        mkdir -p /etc/pki/instack-certs || true
+        cp /home/stack/undercloud.pem /etc/pki/instack-certs
+        semanage fcontext -a -t etc_t "/etc/pki/instack-certs(/.*)?"
+        restorecon -R /etc/pki/instack-certs
+        mkdir -p /etc/pki/ca-trust/source/anchors/
+        cp /home/stack/cacert.pem /etc/pki/ca-trust/source/anchors/
+        cp /home/stack/overcloud-cacert.pem /etc/pki/ca-trust/source/anchors/
+        update-ca-trust extract
+
+    - name: Restart MariaDB
+      become: true
+      service: name=mariadb state=restarted
+
+    - name: Allow restore big dump DB files
+      shell: mysql -uroot -e"set global max_allowed_packet = 1073741824;"
+
+    - name: Restore the backup DB
+      shell: mysql -u root < /var/tmp/test_bk_down/all-databases.sql
+
+    - name: Restart MariaDB to perms to refresh
+      become: true
+      service: name=mariadb state=restarted
+
+    - name: Register root password
+      become: true
+      shell: cat /var/tmp/test_bk_down/root/.my.cnf | grep -m1 password | cut -d'=' -f2 | tr -d "'"
+      register: oldpass
+
+    - name: Clean root password from MariaDB to reinstall the UC
+      shell: |
+        mysqladmin -u root -p{{ oldpass.stdout }} password ''
+
+    - name: Clean users
+      become: true
+      mysql_user: name="{{ item }}" host_all="yes" state="absent"
+      with_items:
+        - ceilometer
+        - glance
+        - heat
+        - ironic
+        - keystone
+        - neutron
+        - nova
+        - mistral
+        - zaqar
+   
+    - name: Reinstall the undercloud
+      shell: |
+        openstack undercloud install
