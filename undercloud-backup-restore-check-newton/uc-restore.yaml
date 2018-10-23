@@ -107,7 +107,7 @@
 
     - name: Restore the backup DB
       become: true
-      shell: mysql -u root < /var/tmp/test_bk_down/root/undercloud-all-databases.sql
+      shell: mysql -u root < /var/tmp/test_bk_down/home/stack/undercloud-all-databases.sql
 
     - name: Restart MariaDB to perms to refresh
       become: true

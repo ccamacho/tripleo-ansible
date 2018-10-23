@@ -36,8 +36,9 @@
       recurse: "yes"
 
   - name: Create UC BD backup
+    become: true
     shell: |
-      sudo mysqldump --opt --single-transaction --all-databases > /root/undercloud-all-databases.sql
+      mysqldump --opt --single-transaction --all-databases > /home/stack/undercloud-all-databases.sql
 
   - name: Create UC FS backup
     shell: |
