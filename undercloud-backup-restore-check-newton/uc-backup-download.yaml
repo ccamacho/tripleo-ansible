@@ -42,7 +42,11 @@
     register: back_files
 
   - name: Print message if backup does not exist
-    shell: echo "Backup does not exist...."
+    vars:
+      msg: |
+        The UC backup does not exists.
+    debug:
+      msg: "{{ msg.split('\n') }}"
     when: back_files.matched|int == 0
 
   - name: Unzip the backup
