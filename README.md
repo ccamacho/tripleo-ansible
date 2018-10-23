@@ -3,11 +3,12 @@ Steps to check the UC backup
 
 The Ansible playbooks presented in this folder will simulate:
   * Backing up an UC.
+  * Download an UC backup.
   * Destroying an UC.
   * Restore an UC.
 
 
-To test the UC backup and restore procedure, run from the UC:
+To test the UC backup and restore procedure, run from the UC as the stack user:
 
 ```
   cd
